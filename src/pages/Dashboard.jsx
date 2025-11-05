@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Upload, FileText, Sparkles, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react'
+import { Upload, FileText, Sparkles, TrendingUp, AlertCircle, CheckCircle, Briefcase } from 'lucide-react'
 import { analyzeResume } from '../utils/api'
 import toast from 'react-hot-toast'
 import ATSScoreMeter from '../components/ATSScoreMeter'
 import KeywordHeatmap from '../components/KeywordHeatmap'
 import RewriteSuggestions from '../components/RewriteSuggestions'
 import SectionAnalysis from '../components/SectionAnalysis'
+import GenAIFeedback from '../components/GenAIFeedback'
+import JobRecommendations from '../components/JobRecommendations'
 
 const Dashboard = () => {
   const [resumeText, setResumeText] = useState('')
@@ -15,6 +17,7 @@ const Dashboard = () => {
   const [analysisResult, setAnalysisResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
+  const [showJobs, setShowJobs] = useState(false)
 
   const handleFileUpload = (file) => {
     if (file.type !== 'application/pdf' && !file.name.endsWith('.docx')) {
@@ -63,12 +66,33 @@ const Dashboard = () => {
 
       const result = await analyzeResume(formData)
       setAnalysisResult(result)
+      
+      // Save resume text for job recommendations
+      // Backend now returns resumeText in response (from parsed file or text)
+      const savedResumeText = resumeText || result.resumeText || ''
+      if (savedResumeText) {
+        localStorage.setItem('lastResumeText', savedResumeText)
+      }
+      // Always save analysis result for reference
+      localStorage.setItem('lastAnalysisResult', JSON.stringify(result))
+      
       toast.success('Analysis complete!')
+      
+      // Auto-show jobs if user wants (optional - can be removed)
+      // setShowJobs(true)
     } catch (error) {
       toast.error(error.response?.data?.message || 'Analysis failed')
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleBrowseJobs = () => {
+    setShowJobs(true)
+    // Scroll to jobs section
+    setTimeout(() => {
+      document.getElementById('job-recommendations')?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
   }
 
   return (
@@ -257,6 +281,36 @@ const Dashboard = () => {
                 sectionAnalysis={analysisResult.sectionAnalysis}
                 scoreBreakdown={analysisResult.scoreBreakdown}
               />
+            )}
+
+            {/* GenAI Feedback */}
+            {analysisResult.genAI && (
+              <GenAIFeedback genAI={analysisResult.genAI} />
+            )}
+
+            {/* Browse Jobs Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mt-8"
+            >
+              <button
+                onClick={handleBrowseJobs}
+                className="inline-flex items-center space-x-2 px-8 py-4 bg-gradient-to-r from-secondary to-accent rounded-2xl font-semibold text-base shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+              >
+                <Briefcase className="w-5 h-5" />
+                <span>Browse Job Recommendations</span>
+              </button>
+            </motion.div>
+
+            {/* Job Recommendations Section */}
+            {showJobs && (
+              <div id="job-recommendations" className="mt-12">
+                <JobRecommendations 
+                  resumeText={resumeText || analysisResult?.resumeText || localStorage.getItem('lastResumeText') || ''}
+                  analysisResult={analysisResult}
+                />
+              </div>
             )}
           </motion.div>
         )}

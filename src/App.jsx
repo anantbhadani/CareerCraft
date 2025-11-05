@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import Hero from './pages/Hero'
 import Dashboard from './pages/Dashboard'
 import Skills from './pages/Skills'
+import Jobs from './pages/Jobs'
 import Profile from './pages/Profile'
 import Settings from './pages/Settings'
 
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Hero />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/skills" element={<Skills />} />
+          <Route path="/jobs" element={<Jobs />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>

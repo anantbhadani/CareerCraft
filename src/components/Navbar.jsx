@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FileText, TrendingUp, User, Settings, Sparkles } from 'lucide-react'
+import { FileText, TrendingUp, User, Settings, Sparkles, Briefcase } from 'lucide-react'
 
 const Navbar = () => {
   const location = useLocation()
@@ -8,6 +8,7 @@ const Navbar = () => {
   const navItems = [
     { path: '/dashboard', icon: FileText, label: 'Dashboard' },
     { path: '/skills', icon: TrendingUp, label: 'Skills' },
+    { path: '/jobs', icon: Briefcase, label: 'Jobs' },
     { path: '/profile', icon: User, label: 'Profile' },
     { path: '/settings', icon: Settings, label: 'Settings' },
   ]
