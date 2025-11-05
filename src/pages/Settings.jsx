@@ -29,11 +29,100 @@ const Settings = () => {
     toast.success(`Privacy mode ${!privacyMode ? 'enabled' : 'disabled'}`)
   }
 
-  const handleClearData = () => {
-    if (confirm('Are you sure you want to clear all local data? This cannot be undone.')) {
-      localStorage.clear()
-      toast.success('All data cleared')
-      window.location.reload()
+  const handleClearData = async () => {
+    // Use a more reliable confirmation method
+    const confirmed = window.confirm('Are you sure you want to clear all local data? This cannot be undone.')
+    
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      // Show loading toast
+      toast.loading('Clearing data...', { id: 'clearData' })
+      
+      // Clear all localStorage keys explicitly
+      const keysToRemove = [
+        'theme',
+        'privacyMode',
+        'userProfile',
+        'skillProgress',
+        'scanHistory',
+        'lastResumeText',
+        'lastAnalysisResult',
+      ]
+      
+      // Remove specific keys first
+      keysToRemove.forEach(key => {
+        try {
+          localStorage.removeItem(key)
+        } catch (e) {
+          console.warn(`Failed to remove ${key}:`, e)
+        }
+      })
+      
+      // Clear all remaining localStorage (backup method)
+      try {
+        localStorage.clear()
+      } catch (e) {
+        console.warn('localStorage.clear() failed:', e)
+        // Fallback: try to remove all keys manually
+        const allKeys = Object.keys(localStorage)
+        allKeys.forEach(key => {
+          try {
+            localStorage.removeItem(key)
+          } catch (e2) {
+            console.warn(`Failed to remove ${key}:`, e2)
+          }
+        })
+      }
+      
+      // Clear sessionStorage
+      try {
+        sessionStorage.clear()
+      } catch (e) {
+        console.warn('sessionStorage.clear() failed:', e)
+      }
+      
+      // Clear IndexedDB if it exists (future-proof)
+      if ('indexedDB' in window && indexedDB) {
+        try {
+          // Get all databases
+          const databases = await indexedDB.databases()
+          
+          // Delete each database
+          const deletePromises = databases.map(db => {
+            if (db.name) {
+              return new Promise((resolve, reject) => {
+                const deleteReq = indexedDB.deleteDatabase(db.name)
+                deleteReq.onsuccess = () => resolve()
+                deleteReq.onerror = () => reject(deleteReq.error)
+                deleteReq.onblocked = () => {
+                  console.warn(`Database ${db.name} deletion blocked`)
+                  resolve() // Continue anyway
+                }
+              })
+            }
+            return Promise.resolve()
+          })
+          
+          await Promise.allSettled(deletePromises)
+        } catch (error) {
+          console.warn('Could not clear IndexedDB:', error)
+          // Don't fail the whole operation if IndexedDB fails
+        }
+      }
+      
+      // Dismiss loading toast and show success
+      toast.success('All data cleared successfully', { id: 'clearData' })
+      
+      // Reload page after a short delay to ensure toast is visible
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000)
+    } catch (error) {
+      console.error('Error clearing data:', error)
+      toast.error('Failed to clear data. Please try again.', { id: 'clearData' })
     }
   }
 
@@ -170,10 +259,7 @@ const Settings = () => {
             <h3 className="text-xl font-semibold mb-2">CareerCraft</h3>
             <p className="text-neutral/60 mb-4">Version 1.0.0</p>
             <p className="text-sm text-neutral/40">
-              Built with ❤️ • Powered by AI & Open Source
-            </p>
-            <p className="text-sm text-neutral/40 mt-2">
-              License: MIT
+              Built by Anant Bhadani
             </p>
           </motion.div>
         </div>
