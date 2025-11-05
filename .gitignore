@@ -1,4 +1,30 @@
+# Dependencies
 node_modules
-vite.config.js
-netlify.toml
-eslintrc.js
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.production.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Config files (keep these, but ignore if needed)
+# vite.config.js
+# netlify.toml
+# eslintrc.js
