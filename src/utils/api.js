@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // Backend API URL - use environment variable or default to deployed backend
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://careercraft-be-x410.onrender.com/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://careercraft-be-im3c.onrender.com/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,

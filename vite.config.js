@@ -14,7 +14,7 @@ export default defineConfig({
     // Proxy is mainly for local dev - in production, use direct API calls
     proxy: {
       '/api': {
-        target: 'https://careercraft-be-x410.onrender.com',
+        target: 'https://careercraft-be-im3c.onrender.com',
         changeOrigin: true,
         secure: true,
       }
