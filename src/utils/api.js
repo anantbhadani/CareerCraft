@@ -1,10 +1,7 @@
 import axios from 'axios'
 
-// Use production backend if deployed, otherwise fallback to local
-const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (import.meta.env.PROD 
-    ? 'https://careercraft-be-x410.onrender.com/api' 
-    : 'http://localhost:3000/api')
+// Backend API URL - use environment variable or default to deployed backend
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://careercraft-be-x410.onrender.com/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
