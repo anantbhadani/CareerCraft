@@ -11,6 +11,8 @@ export default defineConfig({
   ],
   server: {
     port: 5173,
+    // Enable SPA fallback for client-side routing
+    historyApiFallback: true,
     // Proxy is mainly for local dev - in production, use direct API calls
     proxy: {
       '/api': {

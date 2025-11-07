@@ -15,7 +15,9 @@ const Jobs = () => {
     const savedResume = localStorage.getItem('lastResumeText')
     if (savedResume) {
       setResumeText(savedResume)
-      loadRecommendations(savedResume)
+      // Don't auto-load - let user click "Find Jobs" button
+      // This reduces unnecessary API calls
+      // loadRecommendations(savedResume)
     } else {
       // If no resume in localStorage, show message to analyze first
       toast.info('Please analyze a resume in Dashboard first')

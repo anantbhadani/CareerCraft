@@ -28,9 +28,11 @@ const JobRecommendations = ({ resumeText, analysisResult }) => {
     
     setResumeContent(content)
     
-    if (content) {
-      loadRecommendations(content)
-    }
+    // Only auto-load if explicitly requested (when component is shown)
+    // Don't auto-load on mount to reduce unnecessary API calls
+    // if (content) {
+    //   loadRecommendations(content)
+    // }
   }, [resumeText, analysisResult])
 
   const loadRecommendations = async (resume = resumeContent) => {
